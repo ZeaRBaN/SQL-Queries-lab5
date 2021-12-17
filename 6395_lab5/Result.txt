@@ -1,0 +1,437 @@
+1 ))
+
+127.0.0.1/college/student/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=student
+
+   Showing rows 0 -  3 (4 total, Query took 0.0006 seconds.)
+
+
+SELECT student_name
+FROM student NATURAL JOIN enrolled NATURAL JOIN semester_course
+WHERE student.level = "SR" AND semester_course.prof_id= 1;
+
+
+student_name	
+Charles Harris	
+Charles Harris	
+Maria White	
+Charles Harris	
+
+
+2 ))
+
+127.0.0.1/college/student/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=student
+
+   Showing rows 0 -  0 (1 total, Query took 0.0011 seconds.)
+
+
+SELECT *
+FROM student
+WHERE student.age in (
+SELECT MAX(s1.age)
+FROM student s1 NATURAL JOIN enrolled e 
+ NATURAL JOIN semester_course sc 
+ NATURAL JOIN professor p
+WHERE s1.major="History" OR p.prof_name="Michael Miller" );
+
+
+
+202	Charles Harris	Architecture	SR	22	
+
+
+3))
+127.0.0.1/college/student/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=student
+
+   Showing rows 0 - 57 (58 total, Query took 0.0005 seconds.)
+
+
+SELECT s.student_name,c.name
+FROM student s LEFT JOIN (enrolled e NATURAL JOIN course c) ON s.student_id=e.student_id;
+
+
+student_name	name	
+Maria White	Data Structures	
+Maria White	Data Structures	
+Maria White	Archaeology of the Incas	
+Maria White	Aviation Accident Investigatio	
+Charles Harris	Data Structures	
+Charles Harris	Database Systems	
+Charles Harris	Operating System Design	
+Charles Harris	Air Quality Engineering	
+Susan Martin	Database Systems	
+Susan Martin	Operating System Design	
+Susan Martin	Archaeology of the Incas	
+Joseph Thompson	Data Structures	
+Joseph Thompson	American Political Parties	
+Joseph Thompson	Social Cognition	
+Christopher Garcia	Operating System Design	
+Angela Martinez	Data Structures	
+Thomas Robinson	Database Systems	
+Thomas Robinson	Introductory Latin	
+Margaret Clark	Data Structures	
+Margaret Clark	Operating System Design	
+Margaret Clark	Archaeology of the Incas	
+Margaret Clark	Aviation Accident Investigatio	
+Margaret Clark	Air Quality Engineering	
+Juan Rodriguez	Data Structures	
+Juan Rodriguez	Archaeology of the Incas	
+Juan Rodriguez	Aviation Accident Investigatio	
+Dorthy Lewis	Data Structures	
+Dorthy Lewis	Database Systems	
+Dorthy Lewis	Aviation Accident Investigatio	
+Dorthy Lewis	Air Quality Engineering	
+Dorthy Lewis	Introductory Latin	
+Daniel Lee	Data Structures	
+Daniel Lee	Archaeology of the Incas	
+Daniel Lee	Air Quality Engineering	
+Daniel Lee	Introductory Latin	
+Daniel Lee	American Political Parties	
+Lisa Walker	Data Structures	
+Lisa Walker	Archaeology of the Incas	
+Lisa Walker	American Political Parties	
+Lisa Walker	Social Cognition	
+Paul Hall	Data Structures	
+Paul Hall	Operating System Design	
+Paul Hall	Social Cognition	
+Nancy Allen	Operating System Design	
+Nancy Allen	Aviation Accident Investigatio	
+Mark Young	Data Structures	
+Mark Young	Database Systems	
+Mark Young	Operating System Design	
+Mark Young	Aviation Accident Investigatio	
+Mark Young	Air Quality Engineering	
+Luis Hernandez	Data Structures	
+Luis Hernandez	Data Structures	
+Luis Hernandez	Data Structures	
+Luis Hernandez	Database Systems	
+Luis Hernandez	Operating System Design	
+Luis Hernandez	Air Quality Engineering	
+Donald King	
+    NULL
+	
+George Wright	
+    NULL
+	
+4))
+
+127.0.0.1/college/professor/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=student
+
+   Showing rows 0 -  1 (2 total, Query took 0.0006 seconds.)
+
+
+SELECT p.prof_name,COUNT(e.student_id) as enrollment
+FROM  professor p NATURAL JOIN semester_course sc NATURAL JOIN enrolled e
+GROUP BY P.prof_name
+HAVING COUNT(e.student_id)<5;
+
+
+prof_name	enrollment	
+John Williams	3	
+Patricia Jones	2	
+
+
+5))
+127.0.0.1/college/s/		http://localhost/phpmyadmin/index.php?route=/database/sql&db=college
+
+   Showing rows 0 -  5 (6 total, Query took 0.0005 seconds.)
+
+
+SELECT s.student_name
+FROM professor p NATURAL JOIN semester_course sc NATURAL JOIN enrolled e
+NATURAL JOIN student s
+WHERE p.prof_id=2;
+
+
+student_name	
+Maria White	
+Margaret Clark	
+Luis Hernandez	
+Joseph Thompson	
+Lisa Walker	
+Paul Hall	
+
+
+6))
+127.0.0.1/college/course/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=professor
+
+   Showing rows 0 -  6 (7 total, Query took 0.0005 seconds.)
+
+
+SELECT *
+FROM  course c LEFT JOIN (semester_course  NATURAL JOIN professor p NATURAL JOIN department d) 
+ON c.course_code=semester_course.course_code
+WHERE p.prof_id is NULL OR d.dept_name="Computer Science";
+
+
+course_code	name	dept_id	prof_id	course_code	quarter	year	prof_name	dept_name	
+CC10	Data Structures	2	4	CC10	Fall	2016	John Williams	Computer Science	
+CC12	Operating System Design	2	5	CC12	Summer	2016	Patricia Jones	Computer Science	
+CC19	Perception	2	3	CC19	Fall	2016	Mary Johnson	Computer Science	
+CC20	Multivariate Analysis	2	4	CC20	Summer	2016	John Williams	Computer Science	
+CC21	Patent Law	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+CC22	Urban Economics	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+CC23	Organic Chemistry	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+
+7))
+
+127.0.0.1/college/professor/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=professor
+
+   Showing rows 0 -  2 (3 total, Query took 0.0005 seconds.)
+
+
+SELECT p2.prof_name as names
+FROM professor p2 NATURAL JOIN semester_course sc2
+WHERE p2.prof_name LIKE "M%"
+GROUP BY (p2.prof_id)
+HAVING COUNT(sc2.course_code)>2
+
+UNION
+
+SELECT s2.student_name as names
+FROM student s2
+WHERE s2.student_name LIKE "M%" AND S2.age<20;
+
+
+names	
+Michael Miller	
+Margaret Clark	
+Mark Young	
+
+
+8))
+
+127.0.0.1/college/p/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=professor
+
+   Showing rows 0 -  1 (2 total, Query took 0.0010 seconds.)
+
+
+SELECT p.prof_name,p.prof_id
+from semester_course sc NATURAL JOIN professor p NATURAL JOIN department d
+where d.dept_id IN (1,2,3,4)
+GROUP BY (p.prof_id)
+HAVING COUNT(sc.course_code)<2;
+
+
+prof_name	prof_id	
+Mary Johnson	3	
+Patricia Jones	5	
+
+
+9))
+
+127.0.0.1/college/student/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=enrolled
+
+   Showing rows 0 - 58 (59 total, Query took 0.0013 seconds.)
+
+
+SELECT *
+FROM student s LEFT JOIN (enrolled e NATURAL JOIN semester_course sc) ON s.student_id=e.student_id
+RIGHT JOIN professor p ON p.prof_id=sc.prof_id;
+
+
+student_id	student_name	major	level	age	course_code	quarter	year	student_id	enrolled_at	prof_id	prof_id	prof_name	dept_id	
+202	Charles Harris	Architecture	SR	22	CC10	Spring	2014	202	2014-09-25	1	1	Ivana Teach	1	
+210	Dorthy Lewis	Finance	FR	18	CC10	Spring	2014	210	2014-09-25	1	1	Ivana Teach	1	
+211	Daniel Lee	History	FR	17	CC10	Spring	2014	211	2014-09-25	1	1	Ivana Teach	1	
+204	Joseph Thompson	Computer Science	SO	19	CC10	Spring	2015	204	2015-09-25	1	1	Ivana Teach	1	
+212	Lisa Walker	Computer Science	SO	17	CC10	Spring	2015	212	2015-09-25	1	1	Ivana Teach	1	
+213	Paul Hall	Computer Science	JR	18	CC10	Spring	2015	213	2015-09-25	1	1	Ivana Teach	1	
+202	Charles Harris	Architecture	SR	22	CC11	Fall	2012	202	2012-01-25	1	1	Ivana Teach	1	
+210	Dorthy Lewis	Finance	FR	18	CC11	Fall	2012	210	2012-01-25	1	1	Ivana Teach	1	
+216	Luis Hernandez	Electrical Engineering	FR	17	CC11	Fall	2012	216	2012-01-25	1	1	Ivana Teach	1	
+201	Maria White	English	SR	21	CC13	Fall	2013	201	2013-01-25	1	1	Ivana Teach	1	
+208	Margaret Clark	Animal Science	FR	18	CC13	Fall	2013	208	2013-01-25	1	1	Ivana Teach	1	
+209	Juan Rodriguez	Psychology	JR	20	CC13	Fall	2013	209	2013-01-25	1	1	Ivana Teach	1	
+208	Margaret Clark	Animal Science	FR	18	CC14	Fall	2015	208	2015-01-25	1	1	Ivana Teach	1	
+214	Nancy Allen	Accounting	JR	19	CC14	Fall	2015	214	2015-01-25	1	1	Ivana Teach	1	
+215	Mark Young	Finance	FR	18	CC14	Fall	2015	215	2015-01-25	1	1	Ivana Teach	1	
+202	Charles Harris	Architecture	SR	22	CC15	Spring	2014	202	2014-09-25	1	1	Ivana Teach	1	
+210	Dorthy Lewis	Finance	FR	18	CC15	Spring	2014	210	2014-09-25	1	1	Ivana Teach	1	
+211	Daniel Lee	History	FR	17	CC15	Spring	2014	211	2014-09-25	1	1	Ivana Teach	1	
+208	Margaret Clark	Animal Science	FR	18	CC15	Spring	2015	208	2015-09-25	1	1	Ivana Teach	1	
+215	Mark Young	Finance	FR	18	CC15	Spring	2015	215	2015-09-25	1	1	Ivana Teach	1	
+216	Luis Hernandez	Electrical Engineering	FR	17	CC15	Spring	2015	216	2015-09-25	1	1	Ivana Teach	1	
+207	Thomas Robinson	Psychology	SO	18	CC16	Spring	2016	207	2016-09-25	1	1	Ivana Teach	1	
+210	Dorthy Lewis	Finance	FR	18	CC16	Spring	2016	210	2016-09-25	1	1	Ivana Teach	1	
+211	Daniel Lee	History	FR	17	CC16	Spring	2016	211	2016-09-25	1	1	Ivana Teach	1	
+204	Joseph Thompson	Computer Science	SO	19	CC17	Fall	2016	204	2016-01-25	1	1	Ivana Teach	1	
+211	Daniel Lee	History	FR	17	CC17	Fall	2016	211	2016-01-25	1	1	Ivana Teach	1	
+212	Lisa Walker	Computer Science	SO	17	CC17	Fall	2016	212	2016-01-25	1	1	Ivana Teach	1	
+201	Maria White	English	SR	21	CC10	Spring	2013	201	2013-09-25	2	2	James Smith	1	
+208	Margaret Clark	Animal Science	FR	18	CC10	Spring	2013	208	2013-09-25	2	2	James Smith	1	
+216	Luis Hernandez	Electrical Engineering	FR	17	CC10	Spring	2013	216	2013-09-25	2	2	James Smith	1	
+204	Joseph Thompson	Computer Science	SO	19	CC18	Spring	2016	204	2016-09-25	2	2	James Smith	1	
+212	Lisa Walker	Computer Science	SO	17	CC18	Spring	2016	212	2016-09-25	2	2	James Smith	1	
+213	Paul Hall	Computer Science	JR	18	CC18	Spring	2016	213	2016-09-25	2	2	James Smith	1	
+
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	3	Mary Johnson	2	
+206	Angela Martinez	History	SR	19	CC10	Fall	2016	206	2016-01-25	4	4	John Williams	2	
+215	Mark Young	Finance	FR	18	CC10	Fall	2016	215	2016-01-25	4	4	John Williams	2	
+216	Luis Hernandez	Electrical Engineering	FR	17	CC10	Fall	2016	216	2016-01-25	4	4	John Williams	2	
+208	Margaret Clark	Animal Science	FR	18	CC12	Summer	2016	208	2016-06-25	5	5	Patricia Jones	2	
+216	Luis Hernandez	Electrical Engineering	FR	17	CC12	Summer	2016	216	2016-06-25	5	5	Patricia Jones	2	
+201	Maria White	English	SR	21	CC10	Spring	2012	201	2012-09-25	6	6	Michael Miller	3	
+209	Juan Rodriguez	Psychology	JR	20	CC10	Spring	2012	209	2012-09-25	6	6	Michael Miller	3	
+216	Luis Hernandez	Electrical Engineering	FR	17	CC10	Spring	2012	216	2012-09-25	6	6	Michael Miller	3	
+203	Susan Martin	Law	JR	20	CC11	Spring	2016	203	2016-09-25	6	6	Michael Miller	3	
+207	Thomas Robinson	Psychology	SO	18	CC11	Spring	2016	207	2016-09-25	6	6	Michael Miller	3	
+215	Mark Young	Finance	FR	18	CC11	Spring	2016	215	2016-09-25	6	6	Michael Miller	3	
+205	Christopher Garcia	Computer Science	JR	20	CC12	Spring	2015	205	2015-09-25	6	6	Michael Miller	3	
+213	Paul Hall	Computer Science	JR	18	CC12	Spring	2015	213	2015-09-25	6	6	Michael Miller	3	
+214	Nancy Allen	Accounting	JR	19	CC12	Spring	2015	214	2015-09-25	6	6	Michael Miller	3	
+202	Charles Harris	Architecture	SR	22	CC12	Summer	2012	202	2012-06-25	6	6	Michael Miller	3	
+203	Susan Martin	Law	JR	20	CC12	Summer	2012	203	2012-06-25	6	6	Michael Miller	3	
+215	Mark Young	Finance	FR	18	CC12	Summer	2012	215	2012-06-25	6	6	Michael Miller	3	
+203	Susan Martin	Law	JR	20	CC13	Fall	2014	203	2014-01-25	6	6	Michael Miller	3	
+211	Daniel Lee	History	FR	17	CC13	Fall	2014	211	2014-01-25	6	6	Michael Miller	3	
+212	Lisa Walker	Computer Science	SO	17	CC13	Fall	2014	212	2014-01-25	6	6	Michael Miller	3	
+201	Maria White	English	SR	21	CC14	Spring	2013	201	2013-09-25	6	6	Michael Miller	3	
+209	Juan Rodriguez	Psychology	JR	20	CC14	Spring	2013	209	2013-09-25	6	6	Michael Miller	3	
+210	Dorthy Lewis	Finance	FR	18	CC14	Spring	2013	210	2013-09-25	6	6	Michael Miller	3	
+
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	7	Robert Brown	4	
+
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	
+    NULL
+	8	Linda Davis	5	
+
+
+
+10))
+
+127.0.0.1/college/semester_course/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=semester_course
+
+   Showing rows 0 -  2 (3 total, Query took 0.0005 seconds.)
+
+
+SELECT p.prof_id,p.prof_name,c.course_code,c.name
+FROM course c NATURAL JOIN semester_course sc 
+NATURAL JOIN professor p
+GROUP BY p.prof_id,sc.course_code
+HAVING COUNT(sc.course_code)>1;
+
+
+prof_id	prof_name	course_code	name	
+1	Ivana Teach	CC10	Data Structures	
+1	Ivana Teach	CC15	Air Quality Engineering	
+6	Michael Miller	CC12	Operating System Design	
+
+11)
+
+127.0.0.1/college/department/		http://localhost/phpmyadmin/index.php?route=/table/sql&db=college&table=department
+
+   Showing rows 0 -  1 (2 total, Query took 0.0005 seconds.)
+
+
+SELECT DISTINCT d.dept_name
+FROM department d NATURAL JOIN professor p NATURAL JOIN semester_course sc 
+GROUP BY p.prof_id
+HAVING COUNT(sc.course_code)<3;
+
+
+dept_name	
+Chemistry	
+Computer Science	
+
